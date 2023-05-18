@@ -419,13 +419,13 @@ types:
         type: u4
     seq:
       - id: len_name
-        type: u8
+        type: u1
       - id: name
         type: strz
         size: len_name + 1
         encoding: UTF-8
       - id: value
-        type: u8
+        type: u1
         repeat: expr
         repeat-expr: len
 
