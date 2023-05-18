@@ -1,0 +1,11 @@
+twincat-analytics-mqtt-stream:
+    host: tcp://localhost:1883
+    username: <username>
+    password: <password>
+    clientId: <myClientId>
+    connectionTimeout: 30000
+    connectionDelay: 1000
+    automaticReconnect: true
+    streams:
+        "MyMainTopic/ForMachineA": "PlcStream1"
+        "SomeOtherTopicForMachineB": "DeviceStream1"
