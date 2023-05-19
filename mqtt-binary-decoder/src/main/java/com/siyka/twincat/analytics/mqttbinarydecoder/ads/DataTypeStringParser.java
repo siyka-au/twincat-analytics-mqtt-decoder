@@ -1,4 +1,4 @@
-package com.siyka.twincat.analytics.mqttbinarydecoder.analytics;
+package com.siyka.twincat.analytics.mqttbinarydecoder.ads;
 
 public class DataTypeStringParser {
 

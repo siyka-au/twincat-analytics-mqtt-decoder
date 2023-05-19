@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.siyka.twincat.analytics.mqttbinarydecoder.symbols.SymbolStream;
+import com.siyka.twincat.analytics.mqttbinarydecoder.analytics.SymbolStream;
 
 @Service
 public class SymbolService {

@@ -6,7 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import com.siyka.twincat.analytics.mqttbinarydecoder.symbols.SymbolStreamDecoder;
+import com.siyka.twincat.analytics.mqttbinarydecoder.analytics.SymbolStreamDecoder;
 
 public class Test {
     

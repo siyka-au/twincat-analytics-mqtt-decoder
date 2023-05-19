@@ -1,6 +1,8 @@
-package com.siyka.twincat.analytics.mqttbinarydecoder.symbols;
+package com.siyka.twincat.analytics.mqttbinarydecoder.analytics;
 
 import java.util.UUID;
+
+import com.siyka.twincat.analytics.mqttbinarydecoder.analytics.SymbolStream.Flags;
 
 public record SymbolStreamHeader(
         int majorVersion, int minorVersion,

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.siyka.twincat.analytics.mqttbinarydecoder.SymbolService;
-import com.siyka.twincat.analytics.mqttbinarydecoder.symbols.SymbolStream;
+import com.siyka.twincat.analytics.mqttbinarydecoder.analytics.SymbolStream;
 
 @RestController
 @RequestMapping("/symbols")

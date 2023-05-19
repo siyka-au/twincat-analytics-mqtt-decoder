@@ -1,6 +1,4 @@
-package com.siyka.twincat.analytics.mqttbinarydecoder.symbols;
-
-import com.siyka.twincat.analytics.mqttbinarydecoder.ads.AdsDataTypeFlags;
+package com.siyka.twincat.analytics.mqttbinarydecoder.ads;
 
 class AdsDataTypeFlagsDecoder {
 

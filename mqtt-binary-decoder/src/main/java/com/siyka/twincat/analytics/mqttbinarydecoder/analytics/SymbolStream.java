@@ -1,4 +1,4 @@
-package com.siyka.twincat.analytics.mqttbinarydecoder.symbols;
+package com.siyka.twincat.analytics.mqttbinarydecoder.analytics;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,10 +1,10 @@
-package com.siyka.twincat.analytics.mqttbinarydecoder.symbols;
+package com.siyka.twincat.analytics.mqttbinarydecoder.utils;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-class WindowsTime {
+public class WindowsTime {
 
     public static final Instant ZERO = Instant.parse("1601-01-01T00:00:00Z");
 

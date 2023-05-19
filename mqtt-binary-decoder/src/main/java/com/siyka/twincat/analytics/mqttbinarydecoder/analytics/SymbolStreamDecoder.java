@@ -1,4 +1,4 @@
-package com.siyka.twincat.analytics.mqttbinarydecoder.symbols;
+package com.siyka.twincat.analytics.mqttbinarydecoder.analytics;
 
 import static com.siyka.twincat.analytics.mqttbinarydecoder.utils.Decoders.*;
 
@@ -13,6 +13,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.siyka.twincat.analytics.mqttbinarydecoder.ads.AdsDataType;
+import com.siyka.twincat.analytics.mqttbinarydecoder.analytics.DataTypeEntry.ArrayInformation;
+import com.siyka.twincat.analytics.mqttbinarydecoder.analytics.DataTypeEntry.MethodInformation;
 
 public class SymbolStreamDecoder {
 
@@ -90,10 +92,9 @@ public class SymbolStreamDecoder {
         buffer.get(commentBytes);
         var comment = new String(commentBytes).trim();
 
-        Optional<UUID> typeGuid = Optional.empty();
-        if (flags.hasTypeGuid()) {
-            typeGuid = Optional.of(getGuid(buffer));
-        }
+        Optional<UUID> typeGuid = flags.hasTypeGuid()
+                ? Optional.of(getGuid(buffer))
+                : Optional.empty();
 
         buffer.position(startPosition + (int) entryLength);
 
@@ -174,30 +175,25 @@ public class SymbolStreamDecoder {
         buffer.get(commentBytes);
         var comment = new String(commentBytes).trim();
 
-        Optional<DataTypeEntry.ArrayInformation> arrayInformation;
-        if (arrayDimensions > 0) {
-            var arrayLowerBounds = getUnsignedInt(buffer);
-            var arrayLength = getUnsignedInt(buffer);
-            arrayInformation = Optional.of(new DataTypeEntry.ArrayInformation(arrayLowerBounds, arrayLength));
-        } else {
-            arrayInformation = Optional.empty();
-        }
+        Optional<ArrayInformation> arrayInformation = switch(arrayDimensions) {
+            case 0 -> Optional.empty();
+            default -> {
+                var arrayLowerBounds = getUnsignedInt(buffer);
+                var arrayLength = getUnsignedInt(buffer);
+                yield Optional.of(new DataTypeEntry.ArrayInformation(arrayLowerBounds, arrayLength));
+            }
+        };
 
-        List<DataTypeEntry> subItems;
-        if (subItemCount > 0) {
-            subItems = getDataTypeEntries(buffer, subItemCount);
-        } else {
-            subItems = Collections.emptyList();
-        }
+        List<DataTypeEntry> subItems = switch(subItemCount) {
+            case 0 -> Collections.emptyList();
+            default -> getDataTypeEntries(buffer, subItemCount);
+        };
 
-        Optional<UUID> typeGuid;
-        if (flags.hasTypeGuid()) {
-            typeGuid = Optional.of(getGuid(buffer));
-        } else {
-            typeGuid = Optional.empty();
-        }
+        Optional<UUID> typeGuid = flags.hasTypeGuid()
+                ? Optional.of(getGuid(buffer))
+                : Optional.empty();
 
-        Optional<byte[]> copyMask = Optional.empty();
+        Optional<byte[]> copyMask;
         if (flags.hasCopyMask()) {
             var data = new byte[(int) size];
             buffer.get(data);
@@ -206,26 +202,17 @@ public class SymbolStreamDecoder {
             copyMask = Optional.empty();
         }
 
-        List<DataTypeEntry.MethodInformation> methodInformation;
-        if (flags.hasMethodInfos()) {
-            methodInformation = getMethodInformation(buffer);
-        } else {
-            methodInformation = Collections.emptyList();
-        }
+        List<MethodInformation> methodInformation = flags.hasMethodInfos()
+                ? getMethodInformation(buffer)
+                : Collections.emptyList();
 
-        Map<String, String> attributes;
-        if (flags.hasAttributes()) {
-            attributes = getAttributes(buffer);
-        } else {
-            attributes = Collections.emptyMap();
-        }
+        Map<String, String> attributes = flags.hasAttributes()
+                ? getAttributes(buffer)
+                : Collections.emptyMap();
 
-        Map<String, byte[]> enumInformation;
-        if (flags.hasEnumInfos()) {
-            enumInformation = getEnumInformation(buffer, (int) size);
-        } else {
-            enumInformation = Collections.emptyMap();
-        }
+        Map<String, byte[]> enumInformation = flags.hasEnumInfos()
+                ? getEnumInformation(buffer, (int) size)
+                : Collections.emptyMap();
 
         buffer.position(startPosition + (int) entryLength);
 
