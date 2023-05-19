@@ -1,0 +1,2 @@
+# TwinCAT Analytics MQTT Decoder
+This decodes the MQTT binary data stream created by Beckhoff TwinCAT Analytics Data Logger (TF3500) so you can use the data elsewhere, and without the need for Beckhoff TwinCAT Analytics Storage Provider. You can then happily analyse your data using whatever other tools you have available.
