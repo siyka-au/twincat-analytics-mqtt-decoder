@@ -23,6 +23,7 @@ import jakarta.annotation.PostConstruct;
 @Configuration
 public class MqttConfiguration {
 
+    private final static String TC_ANALYTICS_DESCRIPTION_TOPIC = "/Bin/Tx/Desc";
     private final static String TC_ANALYTICS_SYMBOL_TOPIC = "/Bin/Tx/Symbols";
     private final static String TC_ANALYTICS_DATA_TOPIC = "/Bin/Tx/Data";
 
@@ -66,27 +67,31 @@ public class MqttConfiguration {
 
         @PostConstruct
         public void init() {
-            for (var streamConfig : properties.streams().entrySet()) {
+            for (var streamConfig : properties.streams()) {
 
-                var name = streamConfig.getKey();
-                var analyticsStream = streamConfig.getValue();
+                final var descriptionMessageProducer = new Mqttv5PahoMessageDrivenChannelAdapter(clientManager, streamConfig.topic() + TC_ANALYTICS_DESCRIPTION_TOPIC);
+                final var symbolsMessageProducer = new Mqttv5PahoMessageDrivenChannelAdapter(clientManager, streamConfig.topic() + TC_ANALYTICS_SYMBOL_TOPIC);
+                final var dataMessageProducer = new Mqttv5PahoMessageDrivenChannelAdapter(clientManager, streamConfig.topic() + TC_ANALYTICS_DATA_TOPIC);
 
-                var symbolsMessageProducer = new Mqttv5PahoMessageDrivenChannelAdapter(clientManager,
-                        analyticsStream.mainTopic() + "/" + analyticsStream.streamName() + TC_ANALYTICS_SYMBOL_TOPIC);
+                this.flowContext.registration(
+                        IntegrationFlow.from(descriptionMessageProducer)
+                                .enrichHeaders(h -> h.header(TcAnalyticsIntegration.MAGIC_HEADER, streamConfig.name()))
+                                .channel(TcAnalyticsIntegration.DESCRIPTION_UPDATES_CHANNEL_NAME)
+                                .get())
+                        .register();
 
                 this.flowContext.registration(
                         IntegrationFlow.from(symbolsMessageProducer)
                                 .transform(symbolStreamTransformer)
-                                .enrichHeaders(h -> h.header(TcAnalyticsIntegration.MAGIC_HEADER, name))
+                                .enrichHeaders(h -> h.header(TcAnalyticsIntegration.MAGIC_HEADER, streamConfig.name()))
                                 .channel(TcAnalyticsIntegration.SYMBOL_UPDATES_CHANNEL_NAME)
                                 .get())
                         .register();
 
-                var dataMessageProducer = new Mqttv5PahoMessageDrivenChannelAdapter(clientManager,
-                        analyticsStream.mainTopic() + "/" + analyticsStream.streamName() + TC_ANALYTICS_DATA_TOPIC);
+                
 
                 // this.flowContext.registration(
-                // IntegrationFlow.from(messageProducerData)
+                // IntegrationFlow.from(dataMessageProducer)
                 // .transform(new SymbolStreamTransformer())
                 // .enrichHeaders(h -> h.header(TcAnalyticsIntegration.MAGIC_HEADER, name))
                 // .channel(TcAnalyticsIntegration.DATA_UPDATES_CHANNEL_NAME)
@@ -96,11 +101,11 @@ public class MqttConfiguration {
                 this.flowContext.registration(
                         IntegrationFlow.from(dataMessageProducer)
                             .transform(dataStreamTransformer)
-                                .enrichHeaders(h -> h.header(TcAnalyticsIntegration.MAGIC_HEADER, name))
+                                .enrichHeaders(h -> h.header(TcAnalyticsIntegration.MAGIC_HEADER, streamConfig.name()))
                                 .handle(m -> {
-                                    System.out.println("Receiving data from " + m.getHeaders().get(TcAnalyticsIntegration.MAGIC_HEADER));
-                                    System.out.println(m);
-                                    System.out.println();
+                                    // System.out.println("Receiving data from " + m.getHeaders().get(TcAnalyticsIntegration.MAGIC_HEADER));
+                                    // System.out.println(m);
+                                    // System.out.println();
                                     // var decoder = new AnalyticsStreamDecoder(symbolService, name);
                                     // var a = decoder.transform((byte[]) m.getPayload());
                                     // System.out.println(a.toString());

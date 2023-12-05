@@ -1,0 +1,12 @@
+twincat-analytics-mqtt-stream:
+    host: tcp://mqtt01.klipspringer.inductabend.net:1883
+    username: test
+    password: SAeHZdsuZd7XJTTPAbR2vXD3p7FzjzCY
+    clientId: phosphorus
+    connectionTimeout: 30000
+    connectionDelay: 1000
+    automaticReconnect: true
+    streams:
+        -
+            name: "ema"
+            topic: "ema/plc-stream01"

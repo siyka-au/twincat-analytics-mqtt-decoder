@@ -3,8 +3,6 @@ package com.siyka.twincat.analytics.mqttbinarydecoder.analytics;
 import java.util.Optional;
 import java.util.UUID;
 
-import javax.swing.text.html.Option;
-
 import com.siyka.twincat.analytics.mqttbinarydecoder.ads.AdsDataType;
 
 public record SymbolEntry(String name, String typeName, String comment,
